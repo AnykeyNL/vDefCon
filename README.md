@@ -11,4 +11,4 @@ Team Members:
 - Ignacio Osete - @ignosgt
 - Bernt Torbjornsen - @koit12
 - Romain Decker - @woueb
-
+- Eric De Witte - @vEDW
