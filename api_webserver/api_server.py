@@ -145,62 +145,115 @@ class MCP230XX_GPIO(object):
         self.chip = Adafruit_MCP230XX(address, num_gpios, busnum)
     def setmode(self, mode):
         # do nothing
+
         pass
+
     def setup(self, pin, mode):
+
         self.chip.config(pin, mode)
+
     def input(self, pin):
+
         return self.chip.input(pin)
+
     def output(self, pin, value):
         self.chip.output(pin, value)
     def pullup(self, pin, value):
         self.chip.pullup(pin, value)
 
+
 app = Flask(__name__)
 
 green_light = 2
+
 yellow_light = 4
+
 red_light = 6
-buzer = 1
+
+buzer = 0
+
 
 tower = Adafruit_MCP230XX(busnum = 1, address = 0x21, num_gpios = 8)
 
-def switch_all_off():
-     tower.output(red_light,0)
-     tower.output(yellow_light,0)
-     tower.output(green_light,0)
-     tower.output(buzer,0)
-     return
+tower.config(green_light, tower.OUTPUT)
+tower.config(yellow_light, tower.OUTPUT)
+tower.config(red_light, tower.OUTPUT)
+tower.config(buzer, tower.OUTPUT)
 
+
+def switch_all_off():
+    global tower
+    global red_light
+    global green_light
+    global yellow_light
+    global buzer
+    tower.output(red_light,0)
+    tower.output(green_light,0)
+    tower.output(yellow_light,0)
+    tower.output(buzer,0)
+    return
+
+def switch_red():
+    global tower
+    global red_light
+    switch_all_off()
+    tower.output(red_light,1)
+    return
+
+def switch_green():
+    global tower
+    global green_light
+    switch_all_off()
+    tower.output(green_light,1)
+    return
+
+def switch_yellow():
+    global tower
+    global yellow_light
+    switch_all_off()
+    tower.output(yellow_light,1)
+    return
+
+def switch_buzer():
+    global tower
+    global buzer
+    switch_all_off()
+    tower.output(buzer,1)
+    return
 
 
 @app.route('/')
 def hello():
+    switch_all_off()
     return "found vDEFCON API server !"
 
 @app.route('/red')
 def red():
+    switch_red()
     return "you requested red !"
 
 @app.route('/yellow')
 def yellow():
+    switch_yellow()
     return "you requested yellow !"
 
 @app.route('/green')
 def green():
+    switch_green()
     return "you requested green !"
 
 @app.route('/off')
-def green():
+def alloff():
     switch_all_off()
     return "you requested all off !"
 
 
-
-
 @app.route('/beep')
 def beep():
+    switch_buzer()
     return "you requested beep !"
 
 
 if __name__ == "__main__":
 	app.run(debug=False,host='0.0.0.0', port=int(os.getenv('PORT', '5000')))
+
